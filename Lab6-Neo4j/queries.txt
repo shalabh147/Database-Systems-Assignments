@@ -1,0 +1,19 @@
+a. MATCH (n:User)-[:Sent]->(:Tweet)-[:Mentions]->(n:User) RETURN n.name ORDER BY n.name;
+
+b. MATCH (t:Tweet)-[:Contains]->(h:Hashtag) WHERE h.tag = 'proud' AND t.text =~ 'we.*' RETURN t.text;
+
+c. MATCH (n:User)-[:Sent]->(t:Tweet)<-[:Sent]-(:User {name: "Jessica"}) WHERE NOT (t)-[:Contains]->(:Hashtag) RETURN n.name, t.text;
+
+d. MATCH (n:User)-[:Sent]->(t:Tweet)<-[:Sent]-(j:User {name: "Jessica"}) WHERE NOT (t)-[:Contains]->(:Hashtag) AND NOT (n)-[:Follows]->(j) RETURN n.name;
+
+e. MATCH (:User)-[:Follows]->(n:User) RETURN n.name, count(*) as followers ORDER BY followers DESC LIMIT 5;
+
+f. MATCH p = (:User {name: "Ashley"})-[:Follows*]->(n:User) WHERE n.name<>"Ashley" RETURN n.name, max(length(p))
+
+g. MATCH (:User {name: "Thomas"})-[:Follows]->(:User)<-[:Follows]-(n:User) RETURN n.name, count(*) as cnt ORDER BY cnt DESC, n.name LIMIT 5;
+
+h. MATCH (n:User)-[:Sent]->(t:Tweet)-[:Mentions]->(x:User) WHERE NOT (n)-[:Follows]->(x) and n<>x RETURN n.name, x.name, t.text;
+
+i. MATCH (n:User)-[:Sent]->(:Tweet)-[:Contains]->(h:Hashtag) WHERE (:User {name: "Thomas"})-[:Sent]->(:Tweet)-[:Contains]->(h:Hashtag) and n.name<>"Thomas" RETURN DISTINCT n.name;
+
+j. MATCH (:User {name: "Thomas"})-[:Follows]->(:User)<-[:Follows]-(m:User) WITH m, count(*) as c ORDER By c DESC, m.name LIMIT 5 MATCH (x:User)<-[:Follows]-(m:User) RETURN x.name, count(*) as cnt ORDER BY cnt DESC, x.name LIMIT 2;
