@@ -13,7 +13,7 @@ if __name__ == "__main__":
     df = df.withColumn("return", 100*(df["close"]-df["open"])/df["open"])
 
     # average on company name
-    df = df.groupBy("ticker").avg().alias("avg_return")
+    df = df.groupBy("date").avg().alias("avg_return")
 
     # save the average returns to output
     df.write.csv('./stockreturns/')
