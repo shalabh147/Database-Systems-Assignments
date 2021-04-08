@@ -6,12 +6,12 @@ from operator import add
 
 def crawl(url):
     # skip downloading if not html
-    if len(url) < 4 or url[-4:] != "html":
+    if url[-4:] != "html":
         return []
     s = requests.get("http://hari1500.github.io/CS387-lab7-crawler-website/"+url).text
     rx = r'<a href="[^"]*">'
     # filter only local URLs (remove those starting with http)
-    return list(filter(lambda x: len(x)<3 or x[:4]!="http", [s[x.start()+9:x.end()-2] for x in re.finditer(rx, s)]))
+    return list(filter(lambda x: x[:4]!="http", [s[x.start()+9:x.end()-2] for x in re.finditer(rx, s)]))
 
 if __name__ == "__main__":
     # create Spark context with necessary configuration
