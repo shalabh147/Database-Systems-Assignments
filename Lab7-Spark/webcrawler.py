@@ -5,13 +5,12 @@ import re, requests
 from operator import add
 
 def crawl(url):
+    url = "https://hari1500.github.io/CS387-lab7-crawler-website/" + url
     # skip downloading if not html
-    if url[-4:] != "html":
+    if "html" not in requests.head(url).headers.get('content-type'):
         return []
-    s = requests.get("http://hari1500.github.io/CS387-lab7-crawler-website/"+url).text
-    rx = r'<a href="[^"]*">'
-    # filter only local URLs (remove those starting with http)
-    return list(filter(lambda x: x[:4]!="http", [s[x.start()+9:x.end()-2] for x in re.finditer(rx, s)]))
+    # filter local URLs (remove those starting with http)
+    return [x.split('"')[1] for x in re.findall('<a[ ]+href[ ]*=[ ]*"[^{http}].*[{.html}]?">', requests.get(url).text)]
 
 if __name__ == "__main__":
     # create Spark context with necessary configuration
@@ -24,8 +23,10 @@ if __name__ == "__main__":
 
     # break if no new URL
     while new.count() > 0:
-        new = new.flatMap(crawl).subtract(rdd)
+        new = new.flatMap(crawl)
+        old = rdd
         rdd = rdd.union(new)
+        new = new.subtract(old).distinct()
 
     # count the indegree of each URL
     rdd = rdd.map(lambda x: ("/"+x, 1)).reduceByKey(add)
