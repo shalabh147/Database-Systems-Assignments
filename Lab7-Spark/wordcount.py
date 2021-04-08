@@ -5,16 +5,11 @@ import re
 from operator import add
 
 def process(line):
-    # fill
     # convert all characters into lower case
     # replace all non-alphanumerics with whitespace
     # split on whitespaces
     # return list of words
-    l = line[0].split('-')
-    l = l[0] + "-" + l[1]
-    s = line[1].lower()
-    s = re.sub(r'\W+', ' ', s)
-    return [l + " " + x for x in s.split()]
+    return [line[0][:7]+" "+x for x in re.sub(r'[^0-9a-z]+', ' ', line[1].lower()).split() if x != ""]
 
 if __name__ == "__main__":
     # create Spark context with necessary configuration
